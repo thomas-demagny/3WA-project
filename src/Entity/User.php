@@ -54,7 +54,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private Collection $comments;
 
     #[ORM\Column(type: 'datetime')]
-    private $createdAt;
+    private ?DateTimeInterface $createdAt;
 
 
     public function __construct()
