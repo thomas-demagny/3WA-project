@@ -32,7 +32,9 @@ class UserTest extends TestCase
         $value = ['ROLE_ADMIN'];
         $response = $this->user->setRoles($value);
 
+        self::assertInstanceOf(User::class, $response);
         self::assertContains('ROLE_USER', $this->user->getRoles());
+        self::assertContains('ROLE_ADMIN', $this->user->getRoles());
     }
 
     public function testGetPassword(): void{
