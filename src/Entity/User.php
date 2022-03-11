@@ -10,38 +10,38 @@ use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
 use Symfony\Component\Security\Core\User\PasswordAuthenticatedUserInterface;
 use Symfony\Component\Security\Core\User\UserInterface;
-
+use Symfony\Component\Serializer\Annotation\Groups;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ApiResource]
+#[ApiResource(
+    normalizationContext: ['groups' => 'users_read']
+)]
+#[UniqueEntity("email", message: "Cet email est déjà enregistré")]
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
-    /**
-     * @var int
-     */
     #[ORM\Id]
     #[ORM\GeneratedValue]
     #[ORM\Column(type: 'integer')]
     private int $id;
 
-    /**
-     * @var string|null
-     */
     #[ORM\Column(type: 'string', length: 180, unique: true)]
+    #[Groups('users_read')]
+    #[Assert\NotBlank(message: "Vous devez renseigner un email valide.")]
+    #[Assert\Email(message: "Mauvais format d'adresse mail.")]
     private ?string $email;
 
-    /**
-     * @var array
-     */
+
     #[ORM\Column(type: 'json')]
     private array $roles = [];
 
-    /**
-     * @var string
-     */
+
     #[ORM\Column(type: 'string')]
+    #[Assert\NotBlank(message: "Le mot de passe est obligatoire")]
+    #[Assert\Length(min: 5, minMessage: "Votre mot de passe doit comporter au moins 5 caractères")]
     private string $password;
 
     /**
@@ -63,26 +63,17 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         $this->comments = new ArrayCollection();
     }
 
-    /**
-     * @return int|null
-     */
     public function getId(): ?int
     {
         return $this->id;
     }
 
-    /**
-     * @return string|null
-     */
     public function getEmail(): ?string
     {
         return $this->email;
     }
 
-    /**
-     * @param string $email
-     * @return $this
-     */
+
     public function setEmail(string $email): self
     {
         $this->email = $email;
@@ -97,7 +88,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      */
     public function getUserIdentifier(): string
     {
-        return (string) $this->email;
+        return (string)$this->email;
     }
 
     /**
@@ -189,9 +180,6 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
         return $this;
     }
 
-    /**
-     * @return Collection
-     */
     public function getComments(): Collection
     {
         return $this->comments;
