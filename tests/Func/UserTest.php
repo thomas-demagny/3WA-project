@@ -22,7 +22,7 @@ dd($response);
         self::assertNotEmpty($responseDecoded);
     }
 
-  /*  public function testPostUser(): void
+    public function testPostUser(): void
     {
         $response = $this->getResponseFromRequest(
             Request::METHOD_POST,
@@ -32,12 +32,11 @@ dd($response);
         $responseContent = $response->getContent();
         $responseDecoded = json_decode($responseContent);
 
-        dd($response);
         self::assertEquals(Response::HTTP_CREATED, $response->getStatusCode());
         self::assertJson($responseContent);
         self::assertNotEmpty($responseDecoded);
     }
-*/
+
     private function getPayload(): string
     {
         $faker = Factory::create();
