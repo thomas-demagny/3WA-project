@@ -9,10 +9,11 @@ use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
-use JetBrains\PhpStorm\Pure;
+use Symfony\Bridge\Doctrine\Validator\Constraints\UniqueEntity;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: TrickRepository::class)]
-#[ORM\UniqueEntity]
+#[UniqueEntity("title", message: "Ce nom est déjà utilisé")]
 #[ApiResource()]
 class Trick
 {
@@ -22,9 +23,21 @@ class Trick
     private int $id;
 
     #[ORM\Column(type: 'string', length: 255)]
+    #[Assert\NotBlank(message: "Avec un titre c'est mieux ;)")]
+    #[Assert\Length(
+        min: 10,
+        max: 100,
+        minMessage: "Le titre doit contenir minimum {{ limit }} caractères",
+        maxMessage: "Le titre ne peut contenir que {{ limit }} caractères maximum"
+     )]
     private ?string $title;
 
     #[ORM\Column(type: 'text')]
+    #[Assert\NotBlank(message: "Merci de remplir une description")]
+    #[Assert\Length(
+        min: 20,
+        minMessage: "Un minimum de {{ limit }} caractères est requis"
+    )]
     private ?string $description;
 
     #[ORM\Column(type: 'datetime')]
@@ -43,7 +56,7 @@ class Trick
     #[ORM\OneToMany(mappedBy: 'trick', targetEntity: Comment::class, orphanRemoval: true)]
     private Collection $comments;
 
-    #[Pure] public function __construct()
+    public function __construct()
     {
         $this->categories = new ArrayCollection();
         $this->comments = new ArrayCollection();

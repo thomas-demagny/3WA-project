@@ -6,6 +6,7 @@ use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\CommentRepository;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
+use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: CommentRepository::class)]
 #[ApiResource()]
@@ -17,6 +18,11 @@ class Comment
     private int $id;
 
     #[ORM\Column(type: 'text')]
+    #[Assert\NotBlank(message: "Ce champs ne peut pas être vide")]
+    #[Assert\Length(
+        min: 10,
+        minMessage: "Merci de mettre au moins {{ limit }} caractères"
+    )]
     private ?string $content;
 
     #[ORM\Column(type: 'datetime')]
@@ -27,7 +33,7 @@ class Comment
     private ?User $author;
 
     #[ORM\ManyToOne(targetEntity: Trick::class, inversedBy: 'comments')]
-    #[ORM\JoinColumn(nullable: false)]
+    #[ORM\JoinColumn(nullable: false, onDelete: "CASCADE")]
     private ?Trick $trick;
 
     public function getId(): ?int
