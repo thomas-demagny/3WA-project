@@ -2,11 +2,13 @@
 declare(strict_types=1);
 namespace App\Entity;
 
+use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\CommentRepository;
 use DateTimeInterface;
 use Doctrine\ORM\Mapping as ORM;
 
 #[ORM\Entity(repositoryClass: CommentRepository::class)]
+#[ApiResource()]
 class Comment
 {
     #[ORM\Id]

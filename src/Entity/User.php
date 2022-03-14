@@ -17,10 +17,25 @@ use Symfony\Component\Serializer\Annotation\Groups;
 use Symfony\Component\Validator\Constraints as Assert;
 
 #[ORM\Entity(repositoryClass: UserRepository::class)]
-#[ApiResource(
-    normalizationContext: ['groups' => 'users_read']
-)]
 #[UniqueEntity("email", message: "Cet email est déjà enregistré")]
+#[ApiResource(
+    collectionOperations: [
+        'get' => [
+            'normalization_context' => ['user_read']],
+        "post"
+    ],
+    itemOperations: [
+        "get" => [
+            "normalization_context" => ["groups" => ['user_details-read']]
+        ],
+        'put',
+        'patch',
+        'delete'
+    ],
+)]
+
+
+
 class User implements UserInterface, PasswordAuthenticatedUserInterface
 {
     #[ORM\Id]
@@ -29,7 +44,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private int $id;
 
     #[ORM\Column(type: 'string', length: 180, unique: true)]
-    #[Groups('users_read')]
+    #[Groups('user_read')]
     #[Assert\NotBlank(message: "Vous devez renseigner un email valide.")]
     #[Assert\Email(message: "Mauvais format d'adresse mail.")]
     private ?string $email;
