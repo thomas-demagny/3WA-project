@@ -13,9 +13,13 @@ use Faker\Factory;
 use Symfony\Component\PasswordHasher\Hasher\UserPasswordHasherInterface;
 
 
-class AppFixtures extends Fixture
+ class AppFixtures extends Fixture
 {
-    const CATEGORIES = [
+    public function load(ObjectManager $manager)
+{
+    // TODO: Implement load() method.
+}
+/*    const CATEGORIES = [
         'Front',
         'Flip',
         'Back',
@@ -87,5 +91,7 @@ class AppFixtures extends Fixture
         }
 
         $manager->flush();
-    }
+    }*/
+
 }
+
