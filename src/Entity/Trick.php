@@ -5,6 +5,7 @@ namespace App\Entity;
 
 use ApiPlatform\Core\Annotation\ApiResource;
 use App\Repository\TrickRepository;
+use DateTimeImmutable;
 use DateTimeInterface;
 use Doctrine\Common\Collections\ArrayCollection;
 use Doctrine\Common\Collections\Collection;
@@ -50,7 +51,7 @@ class Trick
     #[ORM\JoinColumn(nullable: false)]
     private ?User $author;
 
-    #[ORM\ManyToMany(targetEntity: Category::class, mappedBy: 'tricks')]
+    #[ORM\ManyToMany(targetEntity: Category::class, mappedBy: 'tricks', cascade: ['persist'])]
     private Collection $categories;
 
     #[ORM\OneToMany(mappedBy: 'trick', targetEntity: Comment::class, orphanRemoval: true)]
@@ -58,6 +59,8 @@ class Trick
 
     public function __construct()
     {
+
+        $this->createdAt = new DateTimeImmutable();
         $this->categories = new ArrayCollection();
         $this->comments = new ArrayCollection();
     }

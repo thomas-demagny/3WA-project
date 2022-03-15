@@ -21,12 +21,13 @@ use Symfony\Component\Validator\Constraints as Assert;
 #[ApiResource(
     collectionOperations: [
         'get' => [
-            'normalization_context' => ['user_read']],
-        "post"
+            'normalization_context' => ['user_read']
+        ],
+
     ],
     itemOperations: [
         "get" => [
-            "normalization_context" => ["groups" => ['user_details-read']]
+            "normalization_context" => ["groups" => ['user_details_read']]
         ],
         'put',
         'patch',
@@ -44,7 +45,7 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
     private int $id;
 
     #[ORM\Column(type: 'string', length: 180, unique: true)]
-    #[Groups('user_read')]
+    #[Groups(['user_read', 'user_details_read'])]
     #[Assert\NotBlank(message: "Vous devez renseigner un email valide.")]
     #[Assert\Email(message: "Mauvais format d'adresse mail. '{{ value }}' n'est pas valide")]
     private ?string $email;
@@ -63,9 +64,11 @@ class User implements UserInterface, PasswordAuthenticatedUserInterface
      * @var ArrayCollection|Collection
      */
     #[ORM\OneToMany(mappedBy: 'author', targetEntity: Trick::class)]
+    #[Groups(['user_read', 'user_details_read'])]
     private Collection|ArrayCollection $tricks;
 
     #[ORM\OneToMany(mappedBy: 'author', targetEntity: Comment::class)]
+    #[Groups(['user_read', 'user_details_read'])]
     private Collection $comments;
 
     #[ORM\Column(type: 'datetime')]
